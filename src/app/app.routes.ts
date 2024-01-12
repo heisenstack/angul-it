@@ -1,11 +1,23 @@
 import { Routes } from '@angular/router';
-import { Home } from './pages/home/home';
-import { Captcha } from './pages/captcha/captcha';
-import { Result } from './pages/result/result';
 
 export const routes: Routes = [
-  { path: '', component: Home },
-  { path: 'captcha', component: Captcha },
-  { path: 'result', component: Result },
-  { path: '**', redirectTo: '' }
+  {
+    path: '',
+    loadComponent: () =>
+      import('./features/home/home').then(m => m.HomeComponent),
+  },
+  {
+    path: 'challenge',
+    loadComponent: () =>
+      import('./features/captcha/captcha').then(m => m.CaptchaComponent),
+  },
+  {
+    path: 'result',
+    loadComponent: () =>
+      import('./features/result/result').then(m => m.ResultComponent),
+  },
+  {
+    path: '**',
+    redirectTo: '',
+  },
 ];
