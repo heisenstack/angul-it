@@ -1,9 +1,16 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
-  imports: [],
   selector: 'app-home',
-  styleUrl: './home.scss',
+  standalone: true,
   templateUrl: './home.html',
+  styleUrl: './home.scss',
 })
-export class Home {}
+export class HomeComponent {
+  constructor(private router: Router) {}
+
+  startChallenge(): void {
+    this.router.navigate(['/challenge']);
+  }
+}
