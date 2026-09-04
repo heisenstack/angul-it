@@ -1,9 +1,16 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
-  imports: [],
   selector: 'app-home',
-  styleUrl: './home.scss',
+  imports: [],
   templateUrl: './home.html',
+  styleUrl: './home.scss'
 })
-export class Home {}
+export class Home {
+  constructor(private router: Router) {}
+
+  startChallenge(): void {
+    this.router.navigate(['/captcha']);
+  }
+}
