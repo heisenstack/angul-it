@@ -1,26 +1,24 @@
 <div class="home">
   <header class="home__header">
-    <span class="brand">
-      <span class="brand__mark">A</span>
-      Angul-It
-    </span>
-    <span class="status">
-      <span class="status__dot"></span>
-      System ready
-    </span>
+    <span class="brand">Angul-It</span>
   </header>
 
   <main class="home__main">
-    <p class="eyebrow">001 / Human verification</p>
-    <h1>Prove you're not a bot.</h1>
-    <p class="lead">
-      A short set of challenges stands between you and access — a mix of
-      logic, recognition, and attention checks. No external CAPTCHA
-      service, just our own puzzles.
-    </p>
-    <button class="btn btn--primary" (click)="startChallenge()">
-      Start verification
-    </button>
+    <div class="frame">
+      <span class="frame__corner frame__corner--tl" aria-hidden="true"></span>
+      <span class="frame__corner frame__corner--tr" aria-hidden="true"></span>
+      <span class="frame__corner frame__corner--bl" aria-hidden="true"></span>
+      <span class="frame__corner frame__corner--br" aria-hidden="true"></span>
+
+      <p class="eyebrow">Verification required</p>
+      <h1>Prove you're<br />not a bot.</h1>
+      <p class="lead">
+        A short set of challenges stands between you and access — a mix of
+        logic, recognition, and attention checks. No external CAPTCHA
+        service, just our own puzzles.
+      </p>
+      <button class="btn" (click)="startChallenge()">Start verification</button>
+    </div>
   </main>
 
   <footer class="home__steps">
