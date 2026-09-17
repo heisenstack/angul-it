@@ -7,8 +7,12 @@
 </button>
 
 @if (result === 'incorrect') {
-    <p>❌ try again!</p>
+    <p>try again!</p>
 }
+ <div>
+    <button (click)="previous()" [disabled]="!progress.canGoBack">Previous</button>
+    <button (click)="next()" [disabled]="!alreadyAnswered || !progress.canGoForward">Next</button>
+  </div>
 }@else {
     <p>All challenges complete!</p>
 }

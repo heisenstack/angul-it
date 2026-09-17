@@ -57,6 +57,28 @@ export class ProgressService{
         this.results = [];
         this.saveToStorage();
     }
+    canGoBack(): boolean {
+        return this.currentIndex > 0;
+    }
+    canGoForward(): boolean {
+        return this.currentIndex < this.challenges.length - 1;
+    }
+    resultFor(challengeId: string): ChallengeResult | undefined {
+        return this.results.find(r => r.challengeId === challengeId);
+    }
+    goToPrevious(): void {
+        if (!this.canGoBack()) return;
+        this.currentIndex--;
+        this.saveToStorage(); 
+    }
+    goToNext(): void {
+        const challenge = this.currentChallenge;
+        if (!challenge || !this.canGoForward()) return;
+        const result = this.resultFor(challenge.id);
+        if (!result?.correct) return;
+        this.currentIndex++;
+        this.saveToStorage(); 
+    }
 
     private saveToStorage(): void {
         const state: StoredState = {
