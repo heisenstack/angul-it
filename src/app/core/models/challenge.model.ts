@@ -5,6 +5,6 @@ export interface Challenge {
 }
 
 export interface ChallengeResult {
-    challengId: string;
+    challengeId: string;
     correct: boolean;
 }
