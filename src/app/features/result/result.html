@@ -1,9 +1,13 @@
-<h1>You passed {{ progress.correctCount }} challenge(s)</h1>
+<div class="result">
+  <h1>You passed {{ progress.correctCount }} challenge(s)</h1>
 
-<ul>
-  @for (r of progress.results; track r.challengeId) {
-    <li>
-      {{ r.challengeId }} — {{ r.correct ? 'Correct' : 'Incorrect' }}
-    </li>
-  }
-</ul>
+  <ul>
+    @for (r of progress.results; track r.challengeId) {
+      <li>
+        {{ r.challengeId }} — {{ r.correct ? 'Correct' : 'Incorrect' }}
+      </li>
+    }
+  </ul>
+
+  <button (click)="restart()">Restart</button>
+</div>

@@ -1,0 +1,39 @@
+.captcha {
+  max-width: 32rem;
+  margin: 4rem auto;
+  padding: 0 1rem;
+}
+
+.tiles {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+
+.tiles button {
+  font-size: 1.6rem;
+  width: 3.5rem;
+  height: 3.5rem;
+}
+
+.error {
+  color: #c0392b;
+}
+
+.hint {
+  color: #27ae60;
+}
+
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+  color: #555;
+}

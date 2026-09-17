@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProgressService } from '../../core/services/progress';
 
-
 @Component({
   imports: [],
   selector: 'app-result',
@@ -15,6 +14,7 @@ export class Result {
   log(): void {
     console.log(this.progress);
   }
+
   restart(): void {
     this.progress.reset();
     this.router.navigate(['/']);

@@ -1,38 +1,47 @@
-<h1>Captcha page</h1>
+<div class="captcha">
+  @if (progress.currentChallenge; as current) {
+    <p id="challenge-prompt">{{ current.prompt }}</p>
 
-@if (progress.currentChallenge; as current) {
-  <p>{{ current.prompt }}</p>
-
-  @if (current.type === 'math' || current.type === 'text') {
-    <input type="text" [(ngModel)]="answer" />
-  }
-
-  @if (current.type === 'image-select') {
-    @for (option of current.options; track $index) {
-      <button
-        type="button"
-        (click)="toggleTile($index)"
-        [style.background]="selectedTiles.includes($index) ? 'lightgreen' : 'white'"
-      >
-        {{ option }}
-      </button>
+    @if (current.type === 'math' || current.type === 'text') {
+      <label for="answer-input">Your answer</label>
+      <input id="answer-input" type="text" [(ngModel)]="answer" />
     }
+
+    @if (current.type === 'image-select') {
+      <div class="tiles" role="group" aria-labelledby="challenge-prompt">
+        @for (option of current.options; track $index) {
+          <button
+            type="button"
+            (click)="toggleTile($index)"
+            [attr.aria-pressed]="selectedTiles.includes($index)"
+            [attr.aria-label]="'Option ' + ($index + 1) + ': ' + option"
+            [style.background]="selectedTiles.includes($index) ? 'lightgreen' : 'white'"
+          >
+            {{ option }}
+          </button>
+        }
+      </div>
+    }
+
+    <div>
+      <button (click)="submit()">Submit</button>
+    </div>
+
+    <div aria-live="polite">
+      @if (result === 'incorrect') {
+        <p class="error">Try again.</p>
+      }
+
+      @if (alreadyAnswered) {
+        <p class="hint">✓ Already passed — you can move on.</p>
+      }
+    </div>
+
+    <div class="nav-row">
+      <button (click)="previous()" [disabled]="!progress.canGoBack">← Previous</button>
+      <button (click)="next()" [disabled]="!alreadyAnswered || !progress.canGoForward">Next →</button>
+    </div>
+  } @else {
+    <p>All challenges complete!</p>
   }
-
-  <button (click)="submit()">Submit</button>
-
-  @if (result === 'incorrect') {
-    <p>Try again.</p>
-  }
-
-  @if (alreadyAnswered) {
-    <p>✓ Already passed — you can move on.</p>
-  }
-
-  <div>
-    <button (click)="previous()" [disabled]="!progress.canGoBack">← Previous</button>
-    <button (click)="next()" [disabled]="!alreadyAnswered || !progress.canGoForward">Next →</button>
-  </div>
-} @else {
-  <p>All challenges complete!</p>
-}
+</div>

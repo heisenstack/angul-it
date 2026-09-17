@@ -1,16 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { Challenge } from '../../core/models/challenge.model';
 
 @Component({
+  imports: [],
   selector: 'app-home',
-  standalone: true,
-  templateUrl: './home.html',
   styleUrl: './home.scss',
+  templateUrl: './home.html',
 })
-export class HomeComponent {
-  constructor(private router: Router) {}
-
-  startChallenge(): void {
-    this.router.navigate(['/captcha']);
+export class Home {
+ private route = inject(Router);
+ startChallenge(): void {
+    this.route.navigate(['/captcha']);
   }
 }
