@@ -40,4 +40,8 @@ export class ProgressService{
     advance(): void{
         this.currentIndex++;
     }
+    reset(): void {
+        this.currentIndex = 0;
+        this.results = [];
+    }
 }

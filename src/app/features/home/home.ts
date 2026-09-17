@@ -11,6 +11,6 @@ export class HomeComponent {
   constructor(private router: Router) {}
 
   startChallenge(): void {
-    this.router.navigate(['/challenge']);
+    this.router.navigate(['/captcha']);
   }
 }
