@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Challenge} from '../models/challenge.model';
+import {Challenge, ChallengeResult} from '../models/challenge.model';
 
 const CHALENGE: Challenge[] = [
    { id: 'math-1',prompt: '7+5',answer: '12',},
@@ -11,6 +11,7 @@ const CHALENGE: Challenge[] = [
 export class ProgressService{
     private challenges = CHALENGE;
     currentIndex = 0;
+    results: ChallengeResult[] = [];
 
     get currentChallenge(): Challenge{
         return this.challenges[this.currentIndex]?? null;
@@ -18,6 +19,16 @@ export class ProgressService{
 
     get isFinished(): boolean{
         return this.currentIndex >= this.challenges.length;
+    }
+
+    get correctCount(): number {
+        return this.results.filter(r => r.correct).length;
+    }
+
+    recordResult(correct: boolean): void {
+        const challenge = this.currentChallenge;
+        if (!challenge) return;
+        this.results.push({challengeId: challenge.id, correct});
     }
     // currentChallenge: Challenge = CHALENGE;
 
