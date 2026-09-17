@@ -1,1 +1,14 @@
-<p>captcha works!</p>
+<p>Captcha page</p>
+@if (progress.currentChallenge; as current) {
+    <p>{{ current.prompt }}</p>
+    <input type="text" [(ngModel)] = "answer" />
+<button (click) ="submit()">
+  Submit
+</button>
+
+@if (result === 'incorrect') {
+    <p>❌ try again!</p>
+}
+}@else {
+    <p>All challenges complete!</p>
+}
