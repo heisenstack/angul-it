@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { ProgressService } from '../../core/services/progress';
 
 @Component({
   imports: [],
@@ -6,4 +7,9 @@ import { Component } from '@angular/core';
   styleUrl: './result.scss',
   templateUrl: './result.html',
 })
-export class Result {}
+export class Result {
+  progress = inject(ProgressService);
+  log(): void {
+    console.log(this.progress);
+  }
+}

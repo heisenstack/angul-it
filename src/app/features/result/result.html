@@ -1,1 +1,9 @@
-<p>result works!</p>
+<h1>You passed {{ progress.correctCount }} challenge(s)</h1>
+
+<ul>
+  @for (r of progress.results; track r.challengeId) {
+    <li>
+      {{ r.challengeId }} — {{ r.correct ? 'Correct' : 'Incorrect' }}
+    </li>
+  }
+</ul>
