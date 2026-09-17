@@ -1,11 +1,17 @@
 import { Injectable } from '@angular/core';
-import {Challenge, ChallengeResult} from '../models/challenge.model';
+import { Challenge, ChallengeResult } from '../models/challenge.model';
 
 const CHALENGE: Challenge[] = [
-   { id: 'math-1',prompt: '7+5',answer: '12',},
-   { id: 'math-2',prompt: '9-3',answer: '6',},
-   { id: 'text-1', prompt: 'Type the word "cat" backwards', answer: 'tac' },
-]
+    { id: 'math-1', type: 'math', prompt: '7+5', answer: '12' },
+    { id: 'text-1', type: 'text', prompt: 'Type the word "cat" backwards', answer: 'tac' },
+    {
+        id: 'image-1',
+        type: 'image-select',
+        prompt: 'Select all the tiles showing a cat',
+        options: ['🐱', '🐶', '🐱', '🐦'],
+        answer: ['0', '2'],
+    },
+];
 const STORAGE_KEY = 'progress';
 
 interface StoredState {
@@ -13,21 +19,21 @@ interface StoredState {
     results: ChallengeResult[];
 }
 
-@Injectable({providedIn: 'root'})
-export class ProgressService{
+@Injectable({ providedIn: 'root' })
+export class ProgressService {
     private challenges = CHALENGE;
     currentIndex = 0;
     results: ChallengeResult[] = [];
 
-    constructor(){
+    constructor() {
         this.loadFromStorage();
     }
 
-    get currentChallenge(): Challenge{
-        return this.challenges[this.currentIndex]?? null;
+    get currentChallenge(): Challenge {
+        return this.challenges[this.currentIndex] ?? null;
     }
 
-    get isFinished(): boolean{
+    get isFinished(): boolean {
         return this.currentIndex >= this.challenges.length;
     }
 
@@ -38,17 +44,26 @@ export class ProgressService{
     recordResult(correct: boolean): void {
         const challenge = this.currentChallenge;
         if (!challenge) return;
-        this.results.push({challengeId: challenge.id, correct});
+        this.results.push({ challengeId: challenge.id, correct });
         this.saveToStorage();
     }
     // currentChallenge: Challenge = CHALENGE;
 
-    isCorrect(submitted: string): boolean {
-        const challenge= this.currentChallenge;
+    isCorrect(submitted: string | string[]): boolean {
+        const challenge = this.currentChallenge;
         if (!challenge) return false;
-        return submitted.trim() === challenge.answer;
+
+        if (Array.isArray(challenge.answer)) {
+            const submittedArr = Array.isArray(submitted) ? submitted : [submitted];
+            return (
+                submittedArr.length === challenge.answer.length &&
+                submittedArr.every(a => (challenge.answer as string[]).includes(a))
+            );
+        }
+
+        return submitted === challenge.answer;
     }
-    advance(): void{
+    advance(): void {
         this.currentIndex++;
         this.saveToStorage();
     }
@@ -69,7 +84,7 @@ export class ProgressService{
     goToPrevious(): void {
         if (!this.canGoBack()) return;
         this.currentIndex--;
-        this.saveToStorage(); 
+        this.saveToStorage();
     }
     goToNext(): void {
         const challenge = this.currentChallenge;
@@ -77,7 +92,7 @@ export class ProgressService{
         const result = this.resultFor(challenge.id);
         if (!result?.correct) return;
         this.currentIndex++;
-        this.saveToStorage(); 
+        this.saveToStorage();
     }
 
     private saveToStorage(): void {

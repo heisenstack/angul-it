@@ -1,18 +1,38 @@
-<p>Captcha page</p>
-@if (progress.currentChallenge; as current) {
-    <p>{{ current.prompt }}</p>
-    <input type="text" [(ngModel)] = "answer" />
-<button (click) ="submit()">
-  Submit
-</button>
+<h1>Captcha page</h1>
 
-@if (result === 'incorrect') {
-    <p>try again!</p>
-}
- <div>
-    <button (click)="previous()" [disabled]="!progress.canGoBack">Previous</button>
-    <button (click)="next()" [disabled]="!alreadyAnswered || !progress.canGoForward">Next</button>
+@if (progress.currentChallenge; as current) {
+  <p>{{ current.prompt }}</p>
+
+  @if (current.type === 'math' || current.type === 'text') {
+    <input type="text" [(ngModel)]="answer" />
+  }
+
+  @if (current.type === 'image-select') {
+    @for (option of current.options; track $index) {
+      <button
+        type="button"
+        (click)="toggleTile($index)"
+        [style.background]="selectedTiles.includes($index) ? 'lightgreen' : 'white'"
+      >
+        {{ option }}
+      </button>
+    }
+  }
+
+  <button (click)="submit()">Submit</button>
+
+  @if (result === 'incorrect') {
+    <p>Try again.</p>
+  }
+
+  @if (alreadyAnswered) {
+    <p>✓ Already passed — you can move on.</p>
+  }
+
+  <div>
+    <button (click)="previous()" [disabled]="!progress.canGoBack">← Previous</button>
+    <button (click)="next()" [disabled]="!alreadyAnswered || !progress.canGoForward">Next →</button>
   </div>
-}@else {
-    <p>All challenges complete!</p>
+} @else {
+  <p>All challenges complete!</p>
 }
