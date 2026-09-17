@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Challenge, ChallengeResult } from '../models/challenge.model';
 
-const CHALENGE: Challenge[] = [
-    { id: 'math-1', type: 'math', prompt: '7+5', answer: '12' },
+const CHALLENGE_POOL: Challenge[] = [
+    { id: 'math-1', type: 'math', prompt: '7 + 5', answer: '12' },
     { id: 'text-1', type: 'text', prompt: 'Type the word "cat" backwards', answer: 'tac' },
     {
         id: 'image-1',
@@ -13,6 +13,7 @@ const CHALENGE: Challenge[] = [
     },
 ];
 const STORAGE_KEY = 'progress';
+const SESSION_CHALLENGE_IDS: string[] = ['math-1', 'text-1', 'image-1'];
 
 interface StoredState {
     currentIndex: number;
@@ -21,7 +22,7 @@ interface StoredState {
 
 @Injectable({ providedIn: 'root' })
 export class ProgressService {
-    private challenges = CHALENGE;
+    // private challenges = CHALLENGE_POOL;
     currentIndex = 0;
     results: ChallengeResult[] = [];
 
@@ -29,12 +30,13 @@ export class ProgressService {
         this.loadFromStorage();
     }
 
-    get currentChallenge(): Challenge {
-        return this.challenges[this.currentIndex] ?? null;
+    get currentChallenge(): Challenge | null {
+        const id = SESSION_CHALLENGE_IDS[this.currentIndex];
+        return CHALLENGE_POOL.find(c => c.id === id) ?? null;
     }
 
     get isFinished(): boolean {
-        return this.currentIndex >= this.challenges.length;
+        return this.currentIndex >= SESSION_CHALLENGE_IDS.length;
     }
 
     get correctCount(): number {
@@ -76,7 +78,7 @@ export class ProgressService {
         return this.currentIndex > 0;
     }
     canGoForward(): boolean {
-        return this.currentIndex < this.challenges.length - 1;
+        return this.currentIndex < SESSION_CHALLENGE_IDS.length - 1;
     }
     resultFor(challengeId: string): ChallengeResult | undefined {
         return this.results.find(r => r.challengeId === challengeId);
