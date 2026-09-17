@@ -6,12 +6,22 @@ const CHALENGE: Challenge[] = [
    { id: 'math-2',prompt: '9-3',answer: '6',},
    { id: 'text-1', prompt: 'Type the word "cat" backwards', answer: 'tac' },
 ]
+const STORAGE_KEY = 'progress';
+
+interface StoredState {
+    currentIndex: number;
+    results: ChallengeResult[];
+}
 
 @Injectable({providedIn: 'root'})
 export class ProgressService{
     private challenges = CHALENGE;
     currentIndex = 0;
     results: ChallengeResult[] = [];
+
+    constructor(){
+        this.loadFromStorage();
+    }
 
     get currentChallenge(): Challenge{
         return this.challenges[this.currentIndex]?? null;
@@ -29,6 +39,7 @@ export class ProgressService{
         const challenge = this.currentChallenge;
         if (!challenge) return;
         this.results.push({challengeId: challenge.id, correct});
+        this.saveToStorage();
     }
     // currentChallenge: Challenge = CHALENGE;
 
@@ -39,9 +50,26 @@ export class ProgressService{
     }
     advance(): void{
         this.currentIndex++;
+        this.saveToStorage();
     }
     reset(): void {
         this.currentIndex = 0;
         this.results = [];
+        this.saveToStorage();
+    }
+
+    private saveToStorage(): void {
+        const state: StoredState = {
+            currentIndex: this.currentIndex,
+            results: this.results
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+    private loadFromStorage(): void {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const state: StoredState = JSON.parse(raw) as StoredState;
+        this.currentIndex = state.currentIndex;
+        this.results = state.results;
     }
 }
