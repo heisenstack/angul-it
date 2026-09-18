@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Challenge, ChallengeResult } from '../models/challenge.model';
+import { Challenge, ChallengeResult, ChallengeType } from '../models/challenge.model';
 
 const CHALLENGE_POOL: Challenge[] = [
     { id: 'math-1', type: 'math', prompt: '7 + 5', answer: '12' },
-    { id: 'text-1', type: 'text', prompt: 'Type the word "cat" backwards', answer: 'tac' },
+    { id: 'math-2', type: 'math', prompt: '9 - 3', answer: '6' },
+
+    { id: 'text-1', type: 'text', prompt: 'Type the word "zone" backwards', answer: 'enoz' },
+
     {
         id: 'image-1',
         type: 'image-select',
@@ -11,13 +14,46 @@ const CHALLENGE_POOL: Challenge[] = [
         options: ['🐱', '🐶', '🐱', '🐦'],
         answer: ['0', '2'],
     },
+    
 ];
 const STORAGE_KEY = 'progress';
-const SESSION_CHALLENGE_IDS: string[] = ['math-1', 'text-1', 'image-1'];
+// const SESSION_CHALLENGE_IDS: string[] = pickOneOfEachType().map(c => c.id);
+function pickOneOfEachType(): Challenge[] {
+    const types: ChallengeType[] = ['math', 'text', 'image-select'];
+
+    const oneOfEach = types.map(type => {
+        const matchingChallenges = CHALLENGE_POOL.filter(c => c.type === type);
+
+        const shuffled = shuffle(matchingChallenges);
+
+        return shuffled[0];
+    });
+
+
+    const final = shuffle(oneOfEach);
+
+
+    return final;
+}
+// console.log("IDs: ", SESSION_CHALLENGE_IDS);
 
 interface StoredState {
     currentIndex: number;
     results: ChallengeResult[];
+    sessionChallengeIds: string[];
+}
+function shuffle<T>(items: T[]): T[] {
+    console.log('--- shuffle() called with:', items);
+    const copy = [...items];
+
+    for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        console.log(`  swapping position ${i} (${copy[i]}) with position ${j} (${copy[j]})`);
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+
+    console.log('shuffle:', copy);
+    return copy;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -25,18 +61,21 @@ export class ProgressService {
     // private challenges = CHALLENGE_POOL;
     currentIndex = 0;
     results: ChallengeResult[] = [];
+    private sessionChallengeIds: string[] = [];
+
 
     constructor() {
         this.loadFromStorage();
     }
 
+
     get currentChallenge(): Challenge | null {
-        const id = SESSION_CHALLENGE_IDS[this.currentIndex];
+        const id = this.sessionChallengeIds[this.currentIndex];
         return CHALLENGE_POOL.find(c => c.id === id) ?? null;
     }
 
     get isFinished(): boolean {
-        return this.currentIndex >= SESSION_CHALLENGE_IDS.length;
+        return this.currentIndex >= this.sessionChallengeIds.length;
     }
 
     get correctCount(): number {
@@ -46,7 +85,16 @@ export class ProgressService {
     recordResult(correct: boolean): void {
         const challenge = this.currentChallenge;
         if (!challenge) return;
-        this.results.push({ challengeId: challenge.id, correct });
+
+        const existing = this.results.find(r => r.challengeId === challenge.id);
+
+        if (existing) {
+            existing.attempts = (existing.attempts ?? 0) + 1;
+            existing.correct = correct;
+        } else {
+            this.results.push({ challengeId: challenge.id, correct, attempts: 1 });
+        }
+
         this.saveToStorage();
     }
     // currentChallenge: Challenge = CHALENGE;
@@ -72,13 +120,14 @@ export class ProgressService {
     reset(): void {
         this.currentIndex = 0;
         this.results = [];
+        this.sessionChallengeIds = pickOneOfEachType().map(c => c.id);
         this.saveToStorage();
     }
     canGoBack(): boolean {
         return this.currentIndex > 0;
     }
-    canGoForward(): boolean {
-        return this.currentIndex < SESSION_CHALLENGE_IDS.length - 1;
+    get canGoForward(): boolean {
+        return this.currentIndex < this.sessionChallengeIds.length - 1;
     }
     resultFor(challengeId: string): ChallengeResult | undefined {
         return this.results.find(r => r.challengeId === challengeId);
@@ -90,25 +139,36 @@ export class ProgressService {
     }
     goToNext(): void {
         const challenge = this.currentChallenge;
-        if (!challenge || !this.canGoForward()) return;
+        if (!challenge || !this.canGoForward) return;
         const result = this.resultFor(challenge.id);
         if (!result?.correct) return;
         this.currentIndex++;
         this.saveToStorage();
     }
+    promptFor(challengeId: string): string {
+        return CHALLENGE_POOL.find(c => c.id === challengeId)?.prompt ?? challengeId;
+    }
 
     private saveToStorage(): void {
         const state: StoredState = {
             currentIndex: this.currentIndex,
-            results: this.results
+            results: this.results,
+            sessionChallengeIds: this.sessionChallengeIds,
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
     private loadFromStorage(): void {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return;
-        const state: StoredState = JSON.parse(raw) as StoredState;
+        const state = raw ? (JSON.parse(raw) as StoredState) : null;
+
+        if (!state || !state.sessionChallengeIds || state.sessionChallengeIds.length === 0) {
+            this.sessionChallengeIds = pickOneOfEachType().map(c => c.id);
+            this.saveToStorage();
+            return;
+        }
+
         this.currentIndex = state.currentIndex;
         this.results = state.results;
+        this.sessionChallengeIds = state.sessionChallengeIds;
     }
 }
