@@ -1,47 +1,57 @@
-<div class="captcha">
+<div class="page">
+  <header class="page__header">
+    <span class="brand">Angul-It</span>
+    <span class="meta">Verifying</span>
+  </header>
+
   @if (progress.currentChallenge; as current) {
-    <p id="challenge-prompt">{{ current.prompt }}</p>
+    <main class="page__main">
+      <div class="frame">
+        <span class="frame__corner frame__corner--tl"></span>
+        <span class="frame__corner frame__corner--tr"></span>
+        <span class="frame__corner frame__corner--bl"></span>
+        <span class="frame__corner frame__corner--br"></span>
 
-    @if (current.type === 'math' || current.type === 'text') {
-      <label for="answer-input">Your answer</label>
-      <input id="answer-input" type="text" [(ngModel)]="answer" />
-    }
+        <p class="eyebrow" id="prompt">Challenge</p>
+        <h1>{{ current.prompt }}</h1>
 
-    @if (current.type === 'image-select') {
-      <div class="tiles" role="group" aria-labelledby="challenge-prompt">
-        @for (option of current.options; track $index) {
-          <button
-            type="button"
-            (click)="toggleTile($index)"
-            [attr.aria-pressed]="selectedTiles.includes($index)"
-            [attr.aria-label]="'Option ' + ($index + 1) + ': ' + option"
-            [style.background]="selectedTiles.includes($index) ? 'lightgreen' : 'white'"
-          >
-            {{ option }}
-          </button>
+        @if (current.type === 'math' || current.type === 'text') {
+          <label class="sr-only" for="answer-input">Your answer</label>
+          <input id="answer-input" class="input" type="text" [(ngModel)]="answer" />
         }
+
+        @if (current.type === 'image-select') {
+          <div class="tiles" role="group" aria-labelledby="prompt">
+            @for (option of current.options; track $index) {
+              <button
+                type="button"
+                class="tile"
+                [class.tile--selected]="selectedTiles.includes($index)"
+                [attr.aria-pressed]="selectedTiles.includes($index)"
+                (click)="toggleTile($index)"
+              >
+                {{ option }}
+              </button>
+            }
+          </div>
+        }
+
+        <div aria-live="polite">
+          @if (result === 'incorrect') {
+            <p class="error">Not quite — try again.</p>
+          }
+          @if (alreadyAnswered) {
+            <p class="hint">Already passed — resubmit or move on.</p>
+          }
+        </div>
+
+        <button class="btn" (click)="submit()">Verify & continue</button>
+
+        <div class="nav-row">
+          <button type="button" class="btn-text" [disabled]="!progress.canGoBack()" (click)="previous()">← Previous</button>
+          <button type="button" class="btn-text" [disabled]="!alreadyAnswered || !progress.canGoForward" (click)="next()">Next →</button>
+        </div>
       </div>
-    }
-
-    <div>
-      <button (click)="submit()">Submit</button>
-    </div>
-
-    <div aria-live="polite">
-      @if (result === 'incorrect') {
-        <p class="error">Try again.</p>
-      }
-
-      @if (alreadyAnswered) {
-        <p class="hint">✓ Already passed — you can move on.</p>
-      }
-    </div>
-
-    <div class="nav-row">
-      <button (click)="previous()" [disabled]="!progress.canGoBack">← Previous</button>
-      <button (click)="next()" [disabled]="!alreadyAnswered || !progress.canGoForward">Next →</button>
-    </div>
-  } @else {
-    <p>All challenges complete!</p>
+    </main>
   }
 </div>

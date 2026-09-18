@@ -5,7 +5,7 @@ export const routes : Routes =[
     {
         path: '',
         loadComponent: () => 
-            import('./features/home/home').then(m => m.HomeComponent)
+            import('./features/home/home').then(m => m.Home)
     },
     {
         path: 'captcha',

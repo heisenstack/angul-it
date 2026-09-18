@@ -1,5 +1,22 @@
-<div class="home">
-  <h1>Angul-It</h1>
-  <p>Prove you're not a bot by completing a few short challenges.</p>
-  <button (click)="startChallenge()">Start verification</button>
+<div class="page">
+  <header class="page__header">
+    <span class="brand">Angul-It</span>
+  </header>
+
+  <main class="page__main">
+    <div class="frame">
+      <span class="frame__corner frame__corner--tl"></span>
+      <span class="frame__corner frame__corner--tr"></span>
+      <span class="frame__corner frame__corner--bl"></span>
+      <span class="frame__corner frame__corner--br"></span>
+
+      <p class="eyebrow">Verification required</p>
+      <h1>Prove you're not a bot.</h1>
+      <p class="lead">
+        A short set of challenges stands between you and access — a mix of
+        logic, recognition, and attention checks.
+      </p>
+      <button class="btn" (click)="startChallenge()">Start verification</button>
+    </div>
+  </main>
 </div>

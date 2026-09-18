@@ -1,13 +1,32 @@
-<div class="result">
-  <h1>You passed {{ progress.correctCount }} challenge(s)</h1>
+<div class="page">
+  <header class="page__header">
+    <span class="brand">Angul-It</span>
+    <span class="meta">Complete</span>
+  </header>
 
-  <ul>
-    @for (r of progress.results; track r.challengeId) {
-      <li>
-        {{ r.challengeId }} — {{ r.correct ? 'Correct' : 'Incorrect' }}
-      </li>
-    }
-  </ul>
+  <main class="page__main">
+    <div class="frame">
+      <span class="frame__corner frame__corner--tl"></span>
+      <span class="frame__corner frame__corner--tr"></span>
+      <span class="frame__corner frame__corner--bl"></span>
+      <span class="frame__corner frame__corner--br"></span>
 
-  <button (click)="restart()">Restart</button>
+      <p class="eyebrow">Result</p>
+      <h1>{{ progress.correctCount }} / {{ progress.results.length }} passed</h1>
+
+      <ul class="breakdown">
+        @for (r of progress.results; track r.challengeId) {
+          <li>
+            <span class="breakdown__prompt">{{ progress.promptFor(r.challengeId) }}</span>
+            <span class="breakdown__status" [class.breakdown__status--ok]="r.correct">
+              {{ r.correct ? 'Passed' : 'Failed' }}
+            </span>
+            <span class="breakdown__attempts">{{ r.attempts }}×</span>
+          </li>
+        }
+      </ul>
+
+      <button class="btn" (click)="restart()">Restart</button>
+    </div>
+  </main>
 </div>
