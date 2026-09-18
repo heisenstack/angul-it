@@ -10,5 +10,5 @@ export interface Challenge {
 export interface ChallengeResult {
     challengeId: string;
     correct: boolean;
-    attempts?: number;
+    attempts: number;
 }
